@@ -57,10 +57,7 @@ class HitDetector(object):
         
     def get_sign(self, value):
         """Get the sign of a value. Returns -1, 0, or 1."""
-        if value == 0:
-            return 0
-        else:
-            return value / abs(value)
+        return (x > 0) - (x < 0)
         
     def wrap_get(self, seq, i):
         """Gets the index of a list, but lets the value "wrap-around"
@@ -71,6 +68,12 @@ class HitDetector(object):
         return seq[i % len(seq)]
                    
     def check_line(self):
+        """Determines which part of a 2-simplex is closest
+        to the origin. Sets search direction in accordance.
+        
+        May reduce the simplex to a single point if self.simplex[-1]
+        is the closest aspect.
+        """
         ab = minus(self.simplex[0], self.simplex[1])
         if self.same_direction(ab):
             # set next search vector
@@ -84,6 +87,12 @@ class HitDetector(object):
             self.search = self.ao
                 
     def check_triangle(self):
+        """Determines which part of a 3-simplex is closest
+        to the origin. Sets search direction in accordance.
+
+        May reduce the simplex to either a 2-simplex or a
+        single point, depending on the results.
+        """
         # note that at this point,
         # self.simplex is triangle
         # CBA, not ABC! we want to keep looking
@@ -147,6 +156,13 @@ class HitDetector(object):
                 self.search = self.ao
                 
     def check_tetrahedron(self):
+        """Determines whether the origin is enclosed within
+        a 4-simplex.
+        
+        Changes self.hit to True if there's a hit.
+        Otherwise, drops a point from the simplex and
+        sets the search to its normal vector.
+        """
         # we know triangle DCB is aligned correctly;
         # we need to check the other 3 normals for same_direction
         
@@ -175,7 +191,6 @@ class HitDetector(object):
                 if self.same_direction(norm):
                     good_tris.append(tri)
             else:
-                #new_tri = [bb, cc, aa]
                 new_norm = [-x for x in norm]
                 if self.same_direction(new_norm):
                     good_tris.append([bb, cc, aa])
@@ -220,15 +235,15 @@ class HitDetector(object):
         self.search = minus(shape1.center, shape2.center)
         self.simplex = [self.get_support(shape1, shape2)]
         self.search = [-x for x in self.search]
-        # max_tries keeps it from working on the same
+        # keeps it from working on the same
         # two shapes ad infinitum 
-        tries = 0
-        max_tries = len(shape1.pts) * len(shape2.pts)
-        while tries < max_tries:
-            tries += 1
+        for _ in xrange(len(shape1.pts) * len(shape2.pts)):
             next_pt = self.get_support(shape1, shape2)
-            # if we passed the origin, continue!
-            # if not, we cannot have a hit.
+            # if the dot product of line ON (origin -> next_pt) 
+            # and line OS (origin -> search) is positive, 
+            # then we evolve the simplex and continue.
+            #
+            # if not, we cannot have a hit - return False. Loop over!
             if dot(next_pt, self.search) > 0:
                 self.simplex.append(next_pt)
                 # if the origin is enclosed
@@ -238,7 +253,5 @@ class HitDetector(object):
                 return False
             if self.hit:
                 return True
-        #if not self.hit:
-        #        print "len = {}".format(len(self.simplex))
 
 
