@@ -79,7 +79,7 @@ def main():
                     PlayerObj = player_select[player_is % len(player_select)](*player_stats)
                     PlayerObj.move_to_center(xyz)
                     player_q[0] = PlayerObj
-        #PlayerObj.rotate(.1, "x")
+        PlayerObj.rotate(.1, "x")
         PlayerObj.move()
         
         for s in star_q:
@@ -95,9 +95,13 @@ def main():
                 ZScreen.draw_zcirc(front, 6, [55, 55, 230])
                 if Seeker.find_collision(PlayerObj, s):
                     # simple way to note they bonked
-                    s.color = choice(([200, 55, 55], [55, 200, 55], [55, 55, 200]))
+                    for face in s.faces:
+                        face.color = choice(
+                            ([200, 55, 55], [55, 200, 55], [55, 55, 200])
+                        )
                     
-        ZScreen.zdraw(allq)
+        #ZScreen.zdraw(allq)
+        ZScreen.cull_draw(allq)
         pygame.display.flip()
         Timer.tick(FPS)
 

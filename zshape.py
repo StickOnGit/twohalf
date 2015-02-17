@@ -1,19 +1,21 @@
 from math import hypot, atan2, cos, sin
 from listmath import dot, sq_dist
+from face import Face
 
 class ZShape(object):
     """The base class for 3D objects."""
     def __init__(self, pts, lines):
-        self.pts = []
+        self.pts = pts
         self.lines = []
+        self.faces = []
         self.color = [120, 120, 120]
         self.center = None
         self.direction = [0, 0, 0]
         self.zmove = 0
-        for pt in pts:
-            self.pts.append(pt)
-        for line in lines:
-            self.set_line(*line)
+        #for pt in pts:
+        #    self.pts.append(pt)
+        #for line in lines:
+        #    self.set_line(*line)
         self.set_center()
         self.set_sq_rad()
         
@@ -35,6 +37,9 @@ class ZShape(object):
         
         rads = [sq_dist(self.center, x) for x in self.pts]
         self.sq_rad = max(rads)
+        
+    def set_face(self, pts, lines):
+        self.faces.append(Face(pts, lines, self.center))
             
         
     def set_line(self, a, b):

@@ -1,5 +1,6 @@
 from pygame import display, draw
 from math import sqrt
+from listmath import dot, minus
 try:
     from twodpt import mathfoo as to_2d
 except ImportError:
@@ -69,7 +70,25 @@ class ZView(object):
                 int_pt,
                 radius
             )
-    
+    def cull_draw(self, qs):
+        self.screen.lock()
+        for q in qs:
+            for zshape in sorted(q, key=lambda x: x.center[2], reverse=True):
+                #for line in zshape.lines:
+                for face in zshape.faces:
+                    to_cam = minus(face.order[0], self.camera)
+                    if dot(to_cam, face.get_norm()) < 0:
+                    #if face.get_norm()[-1] < 0:
+                        for line in face.lines:
+                            self.draw_zline(line[0], line[1], face.color, 1)
+                    #if line[0][2] > self.camera[2] and line[1][2] > self.camera[2]:
+                    #    draw.line(self.screen,
+                    #        self.z_color(zshape.color, line[1][2]),
+                    #        to_2d.simple_pt(self.camera, line[0], self.zoom),
+                    #        to_2d.simple_pt(self.camera, line[1], self.zoom),
+                    #        1)
+        self.screen.unlock()
+        
     def zdraw(self, qs):
         self.screen.lock()
         for q in qs:

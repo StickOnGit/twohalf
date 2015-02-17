@@ -19,4 +19,16 @@ class ZCube(ZShape):
                 vector = minus(a, b)
                 if dot(vector, vector) == d**2:
                     newlines.append((a, b))
-        super(ZCube, self).__init__(pts, newlines)
+        super(ZCube, self).__init__(pts, [])
+        pt_groups = (
+                (pts[0], pts[1], pts[2], pts[3]),
+                (pts[4], pts[5], pts[6], pts[7]),
+                (pts[0], pts[1], pts[4], pts[5]),
+                (pts[2], pts[3], pts[6], pts[7]),
+                (pts[0], pts[2], pts[4], pts[6]),
+                (pts[1], pts[3], pts[5], pts[7])                
+            )
+        for group in pt_groups:
+            lines = [(a, b) for a in group for b in group if 
+                    (a, b) in newlines or (b, a) in newlines]
+            self.set_face(group, lines)
