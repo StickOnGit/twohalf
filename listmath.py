@@ -10,6 +10,8 @@ use Python's bare list comprehension -
 - wherever it makes sense.
 """
 
+from math import sqrt
+
 def plus(x, y):
     """Adds the contents of two lists."""
     return [(a + b) for a, b in zip(x, y)]
@@ -31,6 +33,14 @@ def sq_dist(a, b):
     Uses the dot product of the vector and itself."""
     ab = [b - a for a, b in zip(a, b)]
     return sum(abs(c * c) for c in ab)
+    
+def normalize_vector(vector):
+    """Assumes it is receiving a pre-calculated vector and
+    returns the normalized vector.
+    """
+    #v_len = sqrt(dot(vector, vector))
+    v_len = sqrt(sum(x*x for x in vector))
+    return [y / v_len for y in vector]
     
 def coords(xyz, matrix, d):
     """Matrix-math-but-not. 

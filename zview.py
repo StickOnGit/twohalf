@@ -1,6 +1,6 @@
 from pygame import display, draw
 from math import sqrt
-from listmath import dot, minus
+from listmath import dot, minus, normalize_vector
 try:
     from twodpt import mathfoo as to_2d
 except ImportError:
@@ -38,22 +38,13 @@ class ZView(object):
     def z_color(self, color, z):
         d = 1.0 / ((z - self.camera[2]) / self.zoom)
         return color if d > 1 else [int(max(0, c * d)) for c in color]
-    
+        
     def dot_shading(self, face):
-        # get normalized vector for face normal
-        norm = face.get_norm()
-        n_len = sqrt(dot(norm, norm))
-        n_norm = [x / n_len for x in norm]
+        n_norm = normalize_vector(face.get_norm())
+        d_norm = normalize_vector(minus(self.camera, face.order[0]))
         
-        # get normalized vector from light source to face
-        dist = minus(self.camera, face.order[0])
-        d_len = sqrt(dot(dist, dist))
-        d_norm = [y / d_len for y in dist]
-        
-        # dot product of the normalized vectors is
-        # the amount of shading to apply
-        roger = dot(d_norm, n_norm)
-        return [int(c * roger) for c in face.color]
+        shade = dot(n_norm, d_norm)
+        return [int(c*shade) for c in face.color]
         
         
     def draw_zrect(self, rect, z):
