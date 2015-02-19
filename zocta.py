@@ -19,7 +19,7 @@ class ZOcta(ZShape):
                 vector = minus(a, b)
                 if d - e <= (dot(vector, vector) / (d * 2)) <= d + e:
                     lines.append((a, b))
-        super(ZOcta, self).__init__(pts, lines)
+        super(ZOcta, self).__init__(pts)
         pt_groups = (
                 (pts[0], pts[1], pts[2]),
                 (pts[0], pts[1], pts[5]),

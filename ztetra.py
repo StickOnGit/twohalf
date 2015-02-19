@@ -17,7 +17,7 @@ class ZTetra(ZShape):
                 vector = minus(a, b)
                 if d - e <= (dot(vector, vector) / (d * 4)) <= d + e:
                     lines.append((a, b))
-        super(ZTetra, self).__init__(pts, [])
+        super(ZTetra, self).__init__(pts)
         if right:
             self.rotate(-(2*pi)/4, "x")
         pt_group = (

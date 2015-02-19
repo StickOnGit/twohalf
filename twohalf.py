@@ -83,16 +83,16 @@ def main():
         PlayerObj.move()
         
         for s in star_q:
-            #s.move()
+            s.move()
             if s.center[2] < ZScreen.camera[2]:
                 c, d = ZScreen.camera[2] + 1600, ZScreen.camera[2] + 1800
                 s.move_to_center([randint(a, b) for a, b in zip((0, 0, c), (640, 480, d))])
             
             if Seeker.hitcube_collide(PlayerObj, s):
                 # proof that it's looking
-                ZScreen.draw_zline(PlayerObj.center, s.center)
-                front = min([PlayerObj.center, s.center], key=lambda x: x[2])
-                ZScreen.draw_zcirc(front, 6, [55, 55, 230])
+                #ZScreen.draw_zline(PlayerObj.center, s.center)
+                #front = min([PlayerObj.center, s.center], key=lambda x: x[2])
+                #ZScreen.draw_zcirc(front, 6, [55, 55, 230])
                 if Seeker.find_collision(PlayerObj, s):
                     # simple way to note they bonked
                     for face in s.faces:

@@ -38,6 +38,23 @@ class ZView(object):
     def z_color(self, color, z):
         d = 1.0 / ((z - self.camera[2]) / self.zoom)
         return color if d > 1 else [int(max(0, c * d)) for c in color]
+    
+    def dot_shading(self, face):
+        # get normalized vector for face normal
+        norm = face.get_norm()
+        n_len = sqrt(dot(norm, norm))
+        n_norm = [x / n_len for x in norm]
+        
+        # get normalized vector from light source to face
+        dist = minus(self.camera, face.order[0])
+        d_len = sqrt(dot(dist, dist))
+        d_norm = [y / d_len for y in dist]
+        
+        # dot product of the normalized vectors is
+        # the amount of shading to apply
+        roger = dot(d_norm, n_norm)
+        return [int(c * roger) for c in face.color]
+        
         
     def draw_zrect(self, rect, z):
         draw.rect(self.screen, 
@@ -71,19 +88,36 @@ class ZView(object):
                 radius
             )
             
+    def sort_face_pts(self, pts):
+        pt_list = pts[:]
+        pt = pt_list[0]
+        yield pt
+        while pt_list:
+            pt = min(pt_list, key=lambda p: sum(x*x for x in minus(pt, p)))
+            pt_list.remove(pt)
+            yield pt
+            
     def draw_face(self, face):
-        pts = [to_2d.simple_pt(self.camera, x, self.zoom) for x in face.pts]
-        draw.polygon(self.screen, self.z_color(face.color, face.order[0][2]), pts, 0)
+        if any(x[-1] < self.camera[-1] for x in face.pts):
+            return
+        pts = [to_2d.simple_pt(self.camera, x, self.zoom) for x in self.sort_face_pts(face.pts)]
+        z_depth = max(x[-1] for x in face.pts)
+        draw.polygon(self.screen, self.dot_shading(face), pts, 0)
     
     def cull_draw(self, qs):
-        self.screen.lock()
+        all_objs = []
         for q in qs:
-            for zshape in sorted(q, key=lambda x: x.center[-1], reverse=False):
+            for s in q:
+                all_objs.append(s)
+        self.screen.lock()
+        for zshape in sorted(all_objs, key=lambda x: x.center[-1], reverse=True):
+            if not zshape.faces:
+                for line in zshape.lines:
+                    self.draw_zline(line[0], line[1], zshape.color, 1)
+            else:
                 for face in zshape.faces:
-                    to_cam = minus(face.order[0], self.camera)
-                    if dot(to_cam, face.get_norm()) < 0:
-                        for line in face.lines:
-                            self.draw_zline(line[0], line[1], face.color, 5)
+                    if dot(minus(face.order[0], self.camera), face.get_norm()) < 0:
+                        self.draw_face(face)
         self.screen.unlock()
         
     def zdraw(self, qs):

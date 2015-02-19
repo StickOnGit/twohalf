@@ -4,7 +4,7 @@ from face import Face
 
 class ZShape(object):
     """The base class for 3D objects."""
-    def __init__(self, pts, lines):
+    def __init__(self, pts, lines=None):
         self.pts = pts
         self.lines = []
         self.faces = []
@@ -14,8 +14,9 @@ class ZShape(object):
         self.zmove = 0
         #for pt in pts:
         #    self.pts.append(pt)
-        #for line in lines:
-        #    self.set_line(*line)
+        if lines is not None:
+            for line in lines:
+                self.set_line(*line)
         self.set_center()
         self.set_sq_rad()
         
