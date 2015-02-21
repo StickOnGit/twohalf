@@ -12,6 +12,7 @@ class ZView(object):
         self.w, self.h = self.screen.get_size()
         self.horizon = [self.w / 2.0, self.h / 2.0, 500.0]
         self.camera = [self.w / 2.0, self.h / 2.0, -100.0]
+        self.light_source = self.camera[:]
         self.zoom = self.set_zoom()
         
     def set_zoom(self):
@@ -39,11 +40,11 @@ class ZView(object):
         d = 1.0 / ((z - self.camera[2]) / self.zoom)
         return color if d > 1 else [int(max(0, c * d)) for c in color]
         
-    def dot_shading(self, face):
+    def flat_shading(self, face):
         n_norm = normalize_vector(face.get_norm())
-        d_norm = normalize_vector(minus(self.camera, face.order[0]))
+        d_norm = normalize_vector(minus(self.light_source, face.order[0]))
         
-        shade = dot(n_norm, d_norm)
+        shade = abs(dot(n_norm, d_norm))
         return [int(c*shade) for c in face.color]
         
         
@@ -93,7 +94,7 @@ class ZView(object):
             return
         pts = [to_2d.simple_pt(self.camera, x, self.zoom) for x in self.sort_face_pts(face.pts)]
         z_depth = max(x[-1] for x in face.pts)
-        draw.polygon(self.screen, self.dot_shading(face), pts, 0)
+        draw.polygon(self.screen, self.flat_shading(face), pts, 0)
     
     def cull_draw(self, qs):
         all_objs = []

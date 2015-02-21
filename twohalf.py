@@ -8,6 +8,7 @@ from zcube import ZCube
 from ztetra import ZTetra
 from zocta import ZOcta
 from zview import ZView
+from zsphere import ZSphere
     
 def main():
     from random import randint, choice
@@ -22,7 +23,7 @@ def main():
     Seeker = HitDetector()
     
     # init player object
-    player_select = [ZCube, ZTetra, ZOcta]
+    player_select = [ZCube, ZTetra, ZOcta, ZSphere]
     player_is = 0
     player_stats = (0, 0, 0, 25)
     PlayerObj = player_select[player_is](*player_stats)
@@ -62,8 +63,9 @@ def main():
             elif e.type == pygame.MOUSEMOTION:
                 PlayerObj.move_to_center(e.pos + (None,))
             elif e.type == pygame.MOUSEBUTTONDOWN:
-                ZScreen.camera = [e.pos[0], e.pos[1], ZScreen.camera[2]]
-                ZScreen.zoom = ZScreen.set_zoom()
+            #    #ZScreen.camera = [e.pos[0], e.pos[1], ZScreen.camera[2]]
+            #    #ZScreen.zoom = ZScreen.set_zoom()
+                ZScreen.light_source = PlayerObj.center[:]
             elif e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_w:
                     PlayerObj.direction[2] += 10
@@ -81,6 +83,7 @@ def main():
                     player_q[0] = PlayerObj
         PlayerObj.rotate(.1, "x")
         PlayerObj.move()
+        #ZScreen.light_source = star_q[5].center
         
         for s in star_q:
             s.move()
