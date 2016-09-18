@@ -6,8 +6,6 @@ class Face(object):
         self.lines = []
         self.color = [120, 120, 120]
         self.center = None
-        #self.direction = [0, 0, 0]
-        #self.zmove = 0
         for pt in pts:
             self.pts.append(pt)
         self.order = self.pts[:3]
