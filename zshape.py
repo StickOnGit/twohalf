@@ -11,9 +11,6 @@ class ZShape(object):
         self.color = [120, 120, 120]
         self.center = None
         self.direction = [0, 0, 0]
-        self.zmove = 0
-        #for pt in pts:
-        #    self.pts.append(pt)
         if lines is not None:
             for line in lines:
                 self.set_line(*line)
@@ -31,10 +28,8 @@ class ZShape(object):
         
     def set_sq_rad(self):
         """Set the squared radius as the double-dot product of the longest
-        line from the center to the furthest of the object's points."""
-        #def mag(a, b):
-        #    ab = [b - a for a, b in zip(a, b)]
-        #    return dot(ab, ab)
+        line from the center to the furthest of the object's points.
+        """
         
         rads = [sq_dist(self.center, x) for x in self.pts]
         self.sq_rad = max(rads)
@@ -67,7 +62,8 @@ class ZShape(object):
     
     def move_to_center(self, new_center):
         """Moves the shape by setting a new center and then translating all points
-        around the delta."""
+        around the delta.
+        """
         delta = [b - a if b is not None else 0 for a, b in zip(self.center, new_center)]
         for pt in self.pts + [self.center]:
             for i, x in enumerate(pt):
@@ -75,7 +71,8 @@ class ZShape(object):
     
     def move(self):
         """Movement based on the direction vector.
-        Passes if obj.direction == [0, 0, 0]."""
+        Passes if obj.direction == [0, 0, 0].
+        """
         if not self.direction == [0, 0, 0]:
             for pt in self.pts + [self.center]:
                 for i, x in enumerate(pt):

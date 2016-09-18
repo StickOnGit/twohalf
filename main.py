@@ -20,7 +20,7 @@ def main():
     ZScreen = ZView() 
     FPS = 30
     Timer = pygame.time.Clock()
-    Seeker = HitDetector()
+    Collider = HitDetector()
     
     # init player object
     player_select = [ZCube, ZTetra, ZOcta, ZSphere]
@@ -83,7 +83,6 @@ def main():
                     player_q[0] = PlayerObj
         PlayerObj.rotate(.1, "x")
         PlayerObj.move()
-        #ZScreen.light_source = star_q[5].center
         
         for s in star_q:
             s.move()
@@ -91,12 +90,8 @@ def main():
                 c, d = ZScreen.camera[2] + 1600, ZScreen.camera[2] + 1800
                 s.move_to_center([randint(a, b) for a, b in zip((0, 0, c), (640, 480, d))])
             
-            if Seeker.hitcube_collide(PlayerObj, s):
-                # proof that it's looking
-                #ZScreen.draw_zline(PlayerObj.center, s.center)
-                #front = min([PlayerObj.center, s.center], key=lambda x: x[2])
-                #ZScreen.draw_zcirc(front, 6, [55, 55, 230])
-                if Seeker.find_collision(PlayerObj, s):
+            if Collider.hitcube_collide(PlayerObj, s):
+                if Collider.find_collision(PlayerObj, s):
                     # simple way to note they bonked
                     for face in s.faces:
                         face.color = choice(

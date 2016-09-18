@@ -30,7 +30,8 @@ def dot(x, y):
     
 def sq_dist(a, b):
     """Returns the squared distance between two points.
-    Uses the dot product of the vector and itself."""
+    Uses the dot product of the vector and itself.
+    """
     ab = [b - a for a, b in zip(a, b)]
     return sum(abs(c * c) for c in ab)
     
