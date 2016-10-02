@@ -7,17 +7,7 @@ class HitDetector(object):
         self.hit = False
     
     def hitcube_collide(self, shape1, shape2):
-        #cube1 = shape1.hitcube
-        #cube2 = shape2.hitcube
-        #left, top, front = [a - b - c for a, b, c in zip(cube1, cube2, cube2[3:])]
-        #width, height, depth = [p + q for p, q in zip(cube1[3:], cube2[3:])]
-        #return (left < 0 < (left + width) and 
-        #        top < 0 < (top + height) and
-        #        front < 0 < (front + depth))
         return shape1.sq_rad + shape2.sq_rad > sq_dist(shape1.center, shape2.center)
-        #rad_1 = max(shape1.pts, key=lambda p: self.sq_dist(shape1.center, p))
-        #rad_2 = max(shape2.pts, key=lambda q: self.sq_dist(shape2.center, q))
-        #return rad_1 + rad_2 > total_dist
 
     def get_support(self, shape1, shape2):
         """Gets a support point based on two points in
@@ -34,12 +24,14 @@ class HitDetector(object):
     def ao(self):
         """This object constantly checks to ensure that things
         have a positive dot product with the line from simplex[-1] to
-        the origin (0, 0, 0) so this keeps it consistent."""
+        the origin (0, 0, 0) so this keeps it consistent.
+        """
         return [-x for x in self.simplex[-1]]
                     
     def same_direction(self, vector):
         """Checks to see if the dot product of the passed vector and
-        the vector from simplex[-1] to the origin is positive."""
+        the vector from simplex[-1] to the origin is positive.
+        """
         return dot(vector, self.ao) > 0
         
     def same_side(self, a, b, c, d, pt):
